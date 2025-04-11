@@ -30,6 +30,7 @@ import {DecentralizedStableCoin} from "./DecentralizedStableCoin.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import {OracleLib} from "./libraries/OracleLib.sol";
 /*
  * @title DSCEngine
  * @author Akash Jayan
@@ -50,7 +51,7 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/Ag
  * @notice This contract is based on the MakerDAO DSS system
  */
 
-contract DSCEngine is ReentrancyGuard {
+contract DSCEngine is ReentrancyGuard{
     ///////////////////
     // Errors
     ///////////////////
@@ -63,6 +64,13 @@ contract DSCEngine is ReentrancyGuard {
     error DSCEngine__HealthFactorOk();
     error DSCEngine__HealthFatorNotImproved();
     error DSCEngine__NotEnoughCollateral();
+
+    ///////////////////
+    // Types
+    ///////////////////
+    using OracleLib for AggregatorV3Interface;
+
+
     ///////////////////
     // State Variables
     ///////////////////
@@ -123,7 +131,6 @@ contract DSCEngine is ReentrancyGuard {
             s_collateralTokens.push(tokenAddresses[i]);
         }
         i_dsc = DecentralizedStableCoin(dscAddress);
-        
     }
 
     ///////////////////
@@ -305,7 +312,7 @@ contract DSCEngine is ReentrancyGuard {
     function _redeemCollateral(address tokenCollateralAddress, uint256 amountCollateral, address from, address to)
         private
     {
-         if(amountCollateral > s_collateralDeposited[from][tokenCollateralAddress]) {
+        if (amountCollateral > s_collateralDeposited[from][tokenCollateralAddress]) {
             revert DSCEngine__NotEnoughCollateral();
         }
 
@@ -365,17 +372,12 @@ contract DSCEngine is ReentrancyGuard {
         }
     }
 
-
-
-////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     // External & Public View & Pure Functions
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    function calculateHealthFactor(
-        uint256 totalDscMinted,
-        uint256 collateralValueInUsd
-    )
+    function calculateHealthFactor(uint256 totalDscMinted, uint256 collateralValueInUsd)
         external
         pure
         returns (uint256)
@@ -394,11 +396,7 @@ contract DSCEngine is ReentrancyGuard {
     function getUsdValue(
         address token,
         uint256 amount // in WEI
-    )
-        external
-        view
-        returns (uint256)
-    {
+    ) external view returns (uint256) {
         return _getUsdValue(token, amount);
     }
 
@@ -417,7 +415,7 @@ contract DSCEngine is ReentrancyGuard {
 
     function getTokenAmountFromUsd(address token, uint256 usdAmountInWei) public view returns (uint256) {
         AggregatorV3Interface priceFeed = AggregatorV3Interface(s_priceFeeds[token]);
-        (, int256 price,,,) = priceFeed.latestRoundData();
+        (, int256 price,,,) = priceFeed.staleCheckLatestRoundData();
         // $100e18 USD Debt
         // 1 ETH = 2000 USD
         // The returned value from Chainlink will be 2000 * 1e8
@@ -465,4 +463,3 @@ contract DSCEngine is ReentrancyGuard {
         return _healthFactor(user);
     }
 }
-

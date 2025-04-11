@@ -29,7 +29,7 @@
 //      (dsc, dscEngine, helperConfig) = deployer.run();
 //      targetContract(address(dscEngine));
 //       (, , weth,wbtc,) = helperConfig.activeNetworkConfig();
-//    } 
+//    }
 
 //    function invariant_protocalMustHaveMoreValueThanTotalSupply() public view {
 //         uint256 totalSupply = dsc.totalSupply();
@@ -39,7 +39,6 @@
 //         uint256 wbtcValue = dscEngine.getUsdValue(wbtc, totalBtcDeposited);
 //         uint256 totalValue = wethValue + wbtcValue;
 //         assert(totalValue >= totalSupply);
-       
-       
+
 //    }
 // }

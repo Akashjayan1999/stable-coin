@@ -25,7 +25,7 @@ contract DSCEngineTest is Test {
         deployer = new DeployDSC();
         (dsc, dscEngine, helperConfig) = deployer.run();
         (ethUsdPriceFeed, btcUsdPriceFeed, weth,,) = helperConfig.activeNetworkConfig();
-         ERC20Mock(weth).mint(USER, STARTING_ERC20_BALANCE);
+        ERC20Mock(weth).mint(USER, STARTING_ERC20_BALANCE);
     }
 
     ////////////////////////
@@ -82,19 +82,18 @@ contract DSCEngineTest is Test {
         vm.stopPrank();
     }
 
-    modifier depositedcollateral(){
-      vm.startPrank(USER);
-      ERC20Mock(weth).approve(address(dscEngine), AMOUNT_Collateral);
-      dscEngine.depositCollateral(weth, AMOUNT_Collateral);
-      vm.stopPrank();
-      _;
+    modifier depositedcollateral() {
+        vm.startPrank(USER);
+        ERC20Mock(weth).approve(address(dscEngine), AMOUNT_Collateral);
+        dscEngine.depositCollateral(weth, AMOUNT_Collateral);
+        vm.stopPrank();
+        _;
     }
+
     function testCanDepositedCollateralAndGetAccountInfo() public depositedcollateral {
         (uint256 totalDscMinted, uint256 collateralValueInUsd) = dscEngine.getAccountInformation(USER);
         uint256 expectedDepositedAmount = dscEngine.getTokenAmountFromUsd(weth, collateralValueInUsd);
         assertEq(totalDscMinted, 0);
         assertEq(expectedDepositedAmount, AMOUNT_Collateral);
     }
-
-    
 }
