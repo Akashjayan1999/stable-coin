@@ -64,3 +64,7 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
+### for get all get methods
+```shell
+$ forge inspect DSCEngine methods
+ ```

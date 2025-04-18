@@ -56,15 +56,8 @@ contract MockFailedTransfer  is ERC20Burnable, Ownable {
         super.burn(_amount);
     }
 
-    function mint(address _to, uint256 _amount) external onlyOwner returns (bool) {
-        if (_to == address(0)) {
-            revert DecentralizedStableCoin__NotZeroAddress();
-        }
-        if (_amount <= 0) {
-            revert DecentralizedStableCoin__AmountMustBeMoreThanZero();
-        }
-        _mint(_to, _amount);
-        return false;
+     function mint(address account, uint256 amount) public {
+        _mint(account, amount);
     }
 
      function transfer(address, /*recipient*/ uint256 /*amount*/ ) public pure override returns (bool) {

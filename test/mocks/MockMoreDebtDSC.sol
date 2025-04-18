@@ -69,7 +69,7 @@ contract MockFailedTransferFrom  is ERC20Burnable, Ownable {
             revert DecentralizedStableCoin__AmountMustBeMoreThanZero();
         }
         _mint(_to, _amount);
-        return false;
+        return true;
     }
 
      
