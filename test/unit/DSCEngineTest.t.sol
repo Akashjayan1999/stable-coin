@@ -11,7 +11,7 @@ import {MockFailedTransferFrom} from "../mocks/MockFailedTransferFrom.sol";
 import {MockV3Aggregator} from "../mocks/MocksV3Aggregator.sol";
 import {MockFailedMintDSC} from "../mocks/MockFailedMintDSC.sol";
 import {MockFailedTransfer} from "../mocks/MockFailedTransfer.sol";
-
+import {MockMoreDebtDSC} from "../mocks/MockMoreDebtDSC.sol";
 contract DSCEngineTest is Test {
     DecentralizedStableCoin dsc;
     DSCEngine dscEngine;
@@ -26,7 +26,9 @@ contract DSCEngineTest is Test {
     uint256 public constant LIQUIDATION_THRESHOLD = 50;
     uint256 amountToMint = 100 ether;
     address public USER = makeAddr("user");
+    address public liquidator = makeAddr("liquidator");
     uint256 public constant AMOUNT_Collateral = 10 ether;
+    
 
     event CollateralRedeemed(
         address indexed reemededFrom, address indexed reemededTo, address indexed token, uint256 amount
@@ -362,7 +364,20 @@ contract DSCEngineTest is Test {
     // Liquidation Tests //
     ///////////////////////
     // This test needs it's own setup
+   function testMustImproveHealthFactorOnLiquidation() public {
+      MockMoreDebtDSC mockDsc = new MockMoreDebtDSC(ethUsdPriceFeed);
+      tokenAddresses = [weth];
+      priceFeedAddresses = [ethUsdPriceFeed];
+      DSCEngine mockDsce = new DSCEngine(tokenAddresses, priceFeedAddresses, address(mockDsc));
+      mockDsc.transferOwnership(address(mockDsce));
 
+      vm.startPrank(USER);
+      ERC20Mock(weth).approve(address(mockDsce), AMOUNT_Collateral);
+      mockDsce.depositCollateralAndMintDSC(weth, AMOUNT_Collateral, amountToMint);
+      vm.stopPrank();
+
+      
+   }
 
 
 

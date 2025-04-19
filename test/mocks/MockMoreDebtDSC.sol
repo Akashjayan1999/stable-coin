@@ -39,7 +39,7 @@ import {MockV3Aggregator} from "./MocksV3Aggregator.sol";
  * DSCEngine smart contract.
  */
 
-contract MockFailedTransferFrom  is ERC20Burnable, Ownable {
+contract MockMoreDebtDSC   is ERC20Burnable, Ownable {
     error DecentralizedStableCoin__AmountMustBeMoreThanZero();
     error DecentralizedStableCoin__BurnAmountExceedsBalance();
     error DecentralizedStableCoin__NotZeroAddress();
