@@ -264,7 +264,7 @@ contract DSCEngine is ReentrancyGuard{
         
         
         
-        (debtToCover, user, msg.sender);
+        _burnDSc(debtToCover, user, msg.sender);
 
         uint256 endingUserHealthFactor = _healthFactor(user);
         if (endingUserHealthFactor <= startingUserHealthFactor) {
